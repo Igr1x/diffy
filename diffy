@@ -1,0 +1,28 @@
+#!/bin/bash
+search_term="$1"
+
+files=($(git status --porcelain | awk '{print $2}' | grep -i "$search_term"))
+
+if [ ${#files[@]} -eq 0 ]; then
+    echo "File with name '$search_term' not found"
+    exit 0
+fi
+
+echo "Select file to see diff:"
+
+select file in "${files[@]}" "Exit"; do
+    case $file in
+        "Exit")
+            echo "Exit"
+            break
+            ;;
+        *)
+            if [ -n "$file" ]; then
+                git diff "$file"
+            else
+                break;
+            fi
+	    break;
+            ;;
+    esac
+done
